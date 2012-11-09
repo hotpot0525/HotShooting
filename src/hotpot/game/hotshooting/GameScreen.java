@@ -5,6 +5,7 @@ import hotpot.game.framework.Graphics;
 import hotpot.game.framework.Input.TouchEvent;
 import hotpot.game.framework.Screen;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Color;
@@ -17,12 +18,18 @@ public class GameScreen extends Screen {
 	int moveStartX;
 	int moveStartY;
 	int maxSpeed = 40;
+	
+	int frameCount = 0;
+	
+	ArrayList<Bullet> bulletList;
 
 	public GameScreen(Game game) {
 		super(game);
 		player = new Player(30, 120);
 		moveStartX = 0;
 		moveStartY = 0;
+		frameCount= 0;
+		bulletList = new ArrayList<Bullet>();
 	}
 
 	@Override
@@ -47,8 +54,8 @@ public class GameScreen extends Screen {
 							.max(Math.min(event.y - moveStartY, maxSpeed),
 									-maxSpeed);
 
-					player.x += 1 * (moveX) / 10;
-					player.y += 1 * (moveY) / 10;
+					player.x += 1 * (moveX) / 20;
+					player.y += 1 * (moveY) / 20;
 
 					player.x = Math.max(0, Math.min(player.x, 320-16));
 					player.y = Math.max(0, Math.min(player.y, 320-16));
@@ -64,6 +71,19 @@ public class GameScreen extends Screen {
 				}
 			}
 		}
+		
+		
+		
+		if(frameCount % 10 == 0){
+			bulletList.add(new Bullet(player.x+16, player.y));
+			bulletList.add(new Bullet(player.x+16, player.y+16));
+		}
+		
+		// シュート
+		for(Bullet b : bulletList){
+			b.x+= 5;
+		}
+		frameCount++;
 	}
 
 	@Override
@@ -74,6 +94,11 @@ public class GameScreen extends Screen {
 		g.drawRect(player.x, player.y, 16, 14, Color.BLUE);
 
 		g.drawRect(moveStartX, moveStartY, 16, 16, Color.RED);
+		
+		for(Bullet b : bulletList){
+			g.drawRect(b.x, b.y, 4, 4, Color.GREEN);
+		}		
+		
 	}
 
 	@Override
