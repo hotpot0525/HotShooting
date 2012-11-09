@@ -8,6 +8,7 @@ import hotpot.game.framework.Pool.PoolObjectFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -72,7 +73,9 @@ public class MultiTouchHandler implements TouchHandler {
 				break;
 
 			case MotionEvent.ACTION_MOVE:
-				int pointerCount = event.getPointerId(pointerIndex);
+
+				int pointerCount = event.getPointerCount();
+
 				for (int i = 0; i < pointerCount; i++) {
 					pointerIndex = i;
 					pointerId = event.getPointerId(pointerIndex);
