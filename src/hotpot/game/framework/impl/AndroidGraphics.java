@@ -132,7 +132,9 @@ public class AndroidGraphics implements Graphics{
 
 	@Override
 	public void drawText(String text, int x, int y, int color) {
-		// TODO Auto-generated method stub
+		
+		paint.setColor(color);
+		canvas.drawText(text, x, y, paint);
 		
 	}
 	
