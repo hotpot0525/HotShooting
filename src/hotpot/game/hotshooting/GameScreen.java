@@ -23,6 +23,7 @@ public class GameScreen extends Screen {
 	int moveX;
 	int moveY;
 	int maxSpeed = 40;
+	public int score;
 
 	int frameCount = 0;
 
@@ -45,6 +46,7 @@ public class GameScreen extends Screen {
 		moveStartY = 0;
 
 		frameCount = 0;
+		score = 0;
 		bulletList = new ArrayList<Bullet>();
 		enemBulletList = new ArrayList<Bullet>();
 		enemList = new ArrayList<Enemy>();
@@ -121,7 +123,7 @@ public class GameScreen extends Screen {
 						&& new Rect(b.x, b.y, b.x + 16, b.y + 16).intersect(
 								enemy.x, enemy.y, enemy.x + 16, enemy.y + 16)) {
 					b.hitEnemy();
-					enemy.hitBullet();
+					score += enemy.hitBullet();
 				}
 			}
 		}
@@ -174,6 +176,8 @@ public class GameScreen extends Screen {
 		for (Enemy enem : enemList) {
 			if (enem.state == Enemy.State.ALIVE && enem.x > -16) {
 				enem.move();
+			}else{
+				enem.state = Enemy.State.DIE;
 			}
 		}
 
@@ -181,7 +185,8 @@ public class GameScreen extends Screen {
 		for (Bullet b : enemBulletList) {
 			if (b.state == Bullet.State.ALIVE && b.x > -16) {
 				b.move(ShotType.Enemy1);
-
+			}else{
+				b.state = Bullet.State.DIE;
 			}
 		}
 
@@ -236,7 +241,7 @@ public class GameScreen extends Screen {
 			}
 		}
 		
-		g.drawText("hgoehgoe", 100, 10, Color.BLACK);
+		g.drawText("Score:"+Integer.toString(score), 100, 10, Color.BLACK);
 
 	}
 
