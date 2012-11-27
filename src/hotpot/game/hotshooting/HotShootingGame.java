@@ -8,7 +8,8 @@ public class HotShootingGame extends AndroidGame {
 
     @Override
     public Screen getStartScreen() {
-        return new GameScreen(this);
+//        return new GameScreen(this);
+    	return new LoadingScreen(this);
     }
 
 }

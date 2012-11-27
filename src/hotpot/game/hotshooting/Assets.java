@@ -4,6 +4,9 @@ import hotpot.game.framework.Pixmap;
 import hotpot.game.framework.Sound;
 
 public class Assets {
+	
+	public static Pixmap monster5;
+	public static Pixmap effect0;
 //    public static Pixmap background;
 //    public static Pixmap logo;
 //    public static Pixmap mainMenu;

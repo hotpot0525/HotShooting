@@ -4,8 +4,10 @@ import hotpot.game.framework.Game;
 import hotpot.game.framework.Graphics;
 import hotpot.game.framework.Input.TouchEvent;
 import hotpot.game.framework.Screen;
-import hotpot.game.hotshooting.Bullet.ShotType;
 import hotpot.game.hotshooting.Enemy.State;
+import hotpot.game.hotshooting.shot.Bullet;
+import hotpot.game.hotshooting.shot.PlayerShotA;
+import hotpot.game.hotshooting.view.ViewEnemy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +24,12 @@ public class GameScreen extends Screen {
 	int moveStartY;
 	int moveX;
 	int moveY;
-	int maxSpeed = 40;
+	int maxSpeed = 60;
 	public int score;
 
 	int frameCount = 0;
+
+	public ViewEnemy viewEnemy;
 
 	/** 自分の弾のリスト **/
 	ArrayList<Bullet> bulletList;
@@ -51,6 +55,8 @@ public class GameScreen extends Screen {
 		enemBulletList = new ArrayList<Bullet>();
 		enemList = new ArrayList<Enemy>();
 		rand = new Random();
+
+		viewEnemy = new ViewEnemy(game.getGraphics());
 
 	}
 
@@ -86,18 +92,14 @@ public class GameScreen extends Screen {
 
 		// プレイヤーの移動
 		if (moveMode) {
-			player.x += 1 * (moveX) / 20;
-			player.y += 1 * (moveY) / 20;
-
-			player.x = Math.max(0, Math.min(player.x, 320 - 16));
-			player.y = Math.max(0, Math.min(player.y, 320 - 16));
+			player.move(moveX, moveY);
 		}
 
 		// 自分の弾の生成
 		if (frameCount % 10 == 0) {
-			if(player.state == Player.State.ALIVE){
+			if (player.state == Player.State.ALIVE) {
 				createBullet();
-				
+
 			}
 		}
 
@@ -109,7 +111,9 @@ public class GameScreen extends Screen {
 		// 自分の弾の移動
 		for (Bullet b : bulletList) {
 			if (b.state == Bullet.State.ALIVE && b.x < 320 + 16) {
-				b.move(ShotType.Player1);
+				b.move();
+			} else {
+				b.state = Bullet.State.DIE;
 			}
 		}
 
@@ -121,7 +125,8 @@ public class GameScreen extends Screen {
 			for (Enemy enemy : enemList) {
 				if (enemy.state == State.ALIVE
 						&& new Rect(b.x, b.y, b.x + 16, b.y + 16).intersect(
-								enemy.x, enemy.y, enemy.x + 16, enemy.y + 16)) {
+								enemy.x + 20, enemy.y + 20, enemy.x + 60,
+								enemy.y + 60)) {
 					b.hitEnemy();
 					score += enemy.hitBullet();
 				}
@@ -162,12 +167,12 @@ public class GameScreen extends Screen {
 			}
 		}
 
-
 		// 敵の弾の生成
-		if (frameCount % 50 == 0) {
-			for (Enemy enemy : enemList) {
-				if (enemy.state == Enemy.State.ALIVE) {
-					enemBulletList.add(new Bullet(enemy.x, enemy.y + 8));
+		for (Enemy enemy : enemList) {
+			if (enemy.state == Enemy.State.ALIVE && enemy.shotable) {
+				ArrayList<Bullet> newBulletList = enemy.shot();
+				for (Bullet b : newBulletList) {
+					enemBulletList.add(b);
 				}
 			}
 		}
@@ -176,7 +181,7 @@ public class GameScreen extends Screen {
 		for (Enemy enem : enemList) {
 			if (enem.state == Enemy.State.ALIVE && enem.x > -16) {
 				enem.move();
-			}else{
+			} else {
 				enem.state = Enemy.State.DIE;
 			}
 		}
@@ -184,8 +189,8 @@ public class GameScreen extends Screen {
 		// 敵の弾の移動
 		for (Bullet b : enemBulletList) {
 			if (b.state == Bullet.State.ALIVE && b.x > -16) {
-				b.move(ShotType.Enemy1);
-			}else{
+				b.move();
+			} else {
 				b.state = Bullet.State.DIE;
 			}
 		}
@@ -195,14 +200,13 @@ public class GameScreen extends Screen {
 	}
 
 	private void createBullet() {
-		if(frameCount < 1000){
-			bulletList.add(new Bullet(player.x + 16, player.y+8));
-		}else{
-			bulletList.add(new Bullet(player.x + 16, player.y));
-			bulletList.add(new Bullet(player.x + 16, player.y + 16));			
+		if (frameCount < 1000) {
+			bulletList.add(new PlayerShotA(player.x + 16, player.y + 8));
+		} else {
+			bulletList.add(new PlayerShotA(player.x + 16, player.y));
+			bulletList.add(new PlayerShotA(player.x + 16, player.y + 16));
 		}
 
-		
 	}
 
 	@Override
@@ -212,10 +216,10 @@ public class GameScreen extends Screen {
 		g.drawRect(0, 320, 320, 160, Color.GRAY);
 
 		// プレイヤーの描画
-		if(player.state == Player.State.ALIVE){
-			g.drawRect(player.x, player.y, 16, 14, Color.BLUE);	
+		if (player.state == Player.State.ALIVE) {
+			g.drawRect(player.x, player.y, 16, 14, Color.BLUE);
+			// g.drawRect(player.x, player.y, 16, 14, 255);
 		}
-
 
 		// 操作の中心点の描画
 		g.drawRect(moveStartX, moveStartY, 16, 16, Color.RED);
@@ -236,12 +240,15 @@ public class GameScreen extends Screen {
 
 		// 敵の描画
 		for (Enemy enem : enemList) {
-			if (enem.state == Enemy.State.ALIVE) {
-				g.drawRect(enem.x, enem.y, 16, 16, Color.YELLOW);
-			}
+			// if (enem.state == Enemy.State.ALIVE) {
+			// g.drawRect(enem.x, enem.y, 16, 16, Color.YELLOW);
+			viewEnemy.draw(enem);
+			// }
 		}
-		
-		g.drawText("Score:"+Integer.toString(score), 100, 10, Color.BLACK);
+		// HP
+		g.drawText("HP:" + Integer.toString(player.hp), 10, 10, Color.BLACK);
+		// スコア
+		g.drawText("Score:" + Integer.toString(score), 100, 10, Color.BLACK);
 
 	}
 

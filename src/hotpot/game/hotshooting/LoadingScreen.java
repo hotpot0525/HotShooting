@@ -15,6 +15,9 @@ public class LoadingScreen extends Screen {
     public void update(float deltaTime) {
         Graphics g = game.getGraphics();
 
+        Assets.monster5 = g.newPixmap("monster5.gif", PixmapFormat.RGB565);
+        Assets.effect0 = g.newPixmap("effect0.gif", PixmapFormat.RGB565);
+        
 //        Assets.background = g.newPixmap("background.png", PixmapFormat.RGB565);
 //        Assets.logo = g.newPixmap("logo.png", PixmapFormat.ARGB4444);
 //        Assets.mainMenu = g.newPixmap("mainmenu.png", PixmapFormat.ARGB4444);
@@ -46,6 +49,7 @@ public class LoadingScreen extends Screen {
 //        Settings.load(game.getFileIO());
 //        game.setScreen(new MainMenuScreen(game));
 
+        game.setScreen(new GameScreen(game));
     }
 
     @Override
