@@ -97,7 +97,6 @@ public class GameScreen extends Screen {
 		if (frameCount % 10 == 0) {
 			if (player.state == Player.State.ALIVE) {
 				createBullet();
-
 			}
 		}
 
