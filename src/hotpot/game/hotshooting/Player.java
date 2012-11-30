@@ -2,7 +2,7 @@ package hotpot.game.hotshooting;
 
 public class Player {
 	
-	enum State{
+	public enum State{
 		ALIVE, DIE
 	}
 	

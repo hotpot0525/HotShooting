@@ -62,12 +62,15 @@ public class GameScreen extends Screen {
 
 		// イベント処理
 		for (TouchEvent event : eventList) {
+			
+			// cPlayer.setMovePoint(event);
 
 			if (event.type == TouchEvent.TOUCH_DOWN) {
 				if (event.y > 320) {
 					moveMode = true;
 					moveStartX = event.x;
 					moveStartY = event.y;
+					
 				}
 			}
 			if (event.type == TouchEvent.TOUCH_DRAGGED) {
@@ -87,11 +90,15 @@ public class GameScreen extends Screen {
 		}
 
 		// プレイヤーの移動
+		// cPlayer.move();
 		if (moveMode) {
 			player.move(moveX, moveY);
 		}
 
 		// 自分の弾の生成
+		// cPlayer.createBullet
+		// TODO 弾のリストに追加
+		// 生成タイミングはコントローラで決める 
 		if (frameCount % 10 == 0) {
 			if (player.state == Player.State.ALIVE) {
 				createBullet();
@@ -99,6 +106,7 @@ public class GameScreen extends Screen {
 		}
 
 		// 敵の生成
+		// TODO コントローラで生成タイミングを決める
 		if (frameCount % 100 == 0) {
 			cEnemyList.add(new EnemyController(new Enemy(320, rand
 					.nextInt(320 - 16)), new ViewEnemy(game.getGraphics())));
