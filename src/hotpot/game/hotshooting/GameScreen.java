@@ -10,6 +10,7 @@ import hotpot.game.hotshooting.controller.PlayerController;
 import hotpot.game.hotshooting.shot.Bullet;
 import hotpot.game.hotshooting.shot.PlayerShotA;
 import hotpot.game.hotshooting.view.BulletView;
+import hotpot.game.hotshooting.view.PlayerView;
 import hotpot.game.hotshooting.view.ViewEnemy;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class GameScreen extends Screen {
 
 	public ArrayList<EnemyController> cEnemyList;
 	public ArrayList<BulletController> cBulletList;
+	public PlayerController cPlayer;
 
 	/** 自分の弾のリスト **/
 	ArrayList<Bullet> bulletList;
@@ -54,6 +56,7 @@ public class GameScreen extends Screen {
 
 		cEnemyList = new ArrayList<EnemyController>();
 		cBulletList = new ArrayList<BulletController>();
+		cPlayer = new PlayerController(new Player(30, 120), new PlayerView(game.getGraphics()));
 
 	}
 
@@ -63,43 +66,17 @@ public class GameScreen extends Screen {
 
 		// イベント処理
 		for (TouchEvent event : eventList) {
-			
-			// cPlayer.setMovePoint(event);
 
-			if (event.type == TouchEvent.TOUCH_DOWN) {
-				if (event.y > 320) {
-					moveMode = true;
-					moveStartX = event.x;
-					moveStartY = event.y;
-					
-				}
-			}
-			if (event.type == TouchEvent.TOUCH_DRAGGED) {
-
-				moveX = Math.max(Math.min(event.x - moveStartX, maxSpeed),
-						-maxSpeed);
-				moveY = Math.max(Math.min(event.y - moveStartY, maxSpeed),
-						-maxSpeed);
-			}
-			if (event.type == TouchEvent.TOUCH_UP) {
-				if (moveMode) {
-					moveMode = false;
-					moveStartX = 0;
-					moveStartY = 0;
-				}
-			}
+			cPlayer.setMovePoint(event);
 		}
 
 		// プレイヤーの移動
-		// cPlayer.move();
-		if (moveMode) {
-			player.move(moveX, moveY);
-		}
+		cPlayer.move();
 
 		// 自分の弾の生成
-		// cPlayer.createBullet
+		// cPlayer.createBullet();
 		// TODO 弾のリストに追加
-		// 生成タイミングはコントローラで決める 
+		// 生成タイミングはコントローラで決める
 		if (frameCount % 10 == 0) {
 			if (player.state == Player.State.ALIVE) {
 				createBullet();
@@ -140,14 +117,11 @@ public class GameScreen extends Screen {
 			if (b.getState() == Bullet.State.DIE)
 				continue;
 
-//			if(cPlayer.isHit(b)){
-//				b.hit();
-//				cPlayer.hitBullet();
-//			}
-			if (player.state == Player.State.ALIVE && b.isHit(player)) {
+			if (cPlayer.isHit(b)) {
 				b.hit();
-				player.hitBullet();
+				cPlayer.hitBullet();
 			}
+
 		}
 
 		// 敵オブジェクトの破棄
@@ -164,20 +138,21 @@ public class GameScreen extends Screen {
 				bulletList.remove(i);
 			}
 		}
-		
-		// 敵の弾のオブジェクト破棄		
+
+		// 敵の弾のオブジェクト破棄
 		for (int i = cBulletList.size() - 1; i > -1; --i) {
 			if (cBulletList.get(i).getState() != Bullet.State.ALIVE) {
 				cBulletList.get(i).destroy();
 				cBulletList.remove(i);
 			}
-		}		
+		}
 
 		// 敵の弾の生成
 		for (EnemyController ec : cEnemyList) {
 			ArrayList<Bullet> newBulletList = ec.createBullet();
 			for (Bullet b : newBulletList) {
-				cBulletList.add(new BulletController(b, new BulletView(game.getGraphics())));
+				cBulletList.add(new BulletController(b, new BulletView(game
+						.getGraphics())));
 			}
 		}
 
@@ -190,7 +165,7 @@ public class GameScreen extends Screen {
 		for (BulletController bc : cBulletList) {
 			bc.move();
 		}
-		
+
 		// ゲームカウント
 		frameCount++;
 	}
@@ -211,9 +186,8 @@ public class GameScreen extends Screen {
 		g.drawRect(0, 320, 320, 160, Color.GRAY);
 
 		// プレイヤーの描画
-		if (player.state == Player.State.ALIVE) {
-			g.drawRect(player.x, player.y, 16, 14, Color.BLUE);
-		}
+		cPlayer.draw();
+
 
 		// 操作の中心点の描画
 		g.drawRect(moveStartX, moveStartY, 16, 16, Color.RED);
@@ -226,7 +200,7 @@ public class GameScreen extends Screen {
 		}
 
 		// 敵の弾の描画
-		for(BulletController b : cBulletList){
+		for (BulletController b : cBulletList) {
 			b.draw();
 		}
 

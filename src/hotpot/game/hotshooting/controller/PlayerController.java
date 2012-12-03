@@ -8,19 +8,21 @@ import hotpot.game.hotshooting.view.PlayerView;
 
 import java.util.ArrayList;
 
+import android.graphics.Color;
+
 public class PlayerController {
 
 	/** 移動中かどうか */
 	boolean moveMode = false;
-	
+
 	/** 移動開始位置 */
 	int moveStartX;
 	int moveStartY;
-	
+
 	/** 移動先 */
 	int moveX;
 	int moveY;
-	
+
 	/** 移動速度 */
 	int maxSpeed = 60;
 
@@ -33,7 +35,7 @@ public class PlayerController {
 		player = p;
 		vPlayer = pv;
 		moveStartX = 0;
-		moveStartY = 0;		
+		moveStartY = 0;
 		frameCount = 0;
 	}
 
@@ -88,17 +90,24 @@ public class PlayerController {
 		}
 		return bulletList;
 	}
-	
-	public void hitBullet(){
+
+	public void hitBullet() {
 		player.hitBullet();
 	}
-	
-	public boolean isHit(BulletController b){
-		if(player.state == Player.State.ALIVE && b.isHit(player)){
+
+	public boolean isHit(BulletController b) {
+		if (player.state == Player.State.ALIVE && b.isHit(player)) {
 			return true;
 		}
-				
+
 		return false;
-				
+
+	}
+
+	public void draw() {
+		if (player.state == Player.State.ALIVE) {
+			vPlayer.draw(player.x, player.y);
+		}
+
 	}
 }
