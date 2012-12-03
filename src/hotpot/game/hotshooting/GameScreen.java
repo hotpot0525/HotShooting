@@ -6,6 +6,7 @@ import hotpot.game.framework.Input.TouchEvent;
 import hotpot.game.framework.Screen;
 import hotpot.game.hotshooting.controller.BulletController;
 import hotpot.game.hotshooting.controller.EnemyController;
+import hotpot.game.hotshooting.controller.PlayerController;
 import hotpot.game.hotshooting.shot.Bullet;
 import hotpot.game.hotshooting.shot.PlayerShotA;
 import hotpot.game.hotshooting.view.BulletView;
@@ -139,6 +140,10 @@ public class GameScreen extends Screen {
 			if (b.getState() == Bullet.State.DIE)
 				continue;
 
+//			if(cPlayer.isHit(b)){
+//				b.hit();
+//				cPlayer.hitBullet();
+//			}
 			if (player.state == Player.State.ALIVE && b.isHit(player)) {
 				b.hit();
 				player.hitBullet();

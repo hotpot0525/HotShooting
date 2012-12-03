@@ -88,4 +88,17 @@ public class PlayerController {
 		}
 		return bulletList;
 	}
+	
+	public void hitBullet(){
+		player.hitBullet();
+	}
+	
+	public boolean isHit(BulletController b){
+		if(player.state == Player.State.ALIVE && b.isHit(player)){
+			return true;
+		}
+				
+		return false;
+				
+	}
 }
