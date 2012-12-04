@@ -8,7 +8,7 @@ import hotpot.game.hotshooting.view.PlayerView;
 
 import java.util.ArrayList;
 
-import android.graphics.Color;
+import android.util.Log;
 
 public class PlayerController {
 
@@ -67,17 +67,17 @@ public class PlayerController {
 		if (moveMode) {
 			player.move(moveX, moveY);
 		}
-		frameCount++;
 	}
 
 	public ArrayList<Bullet> createBullet() {
+		ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
 		if (frameCount % 10 == 0) {
 			if (player.state == Player.State.ALIVE) {
-				createBulletA();
+				bulletList = createBulletA();
 			}
 		}
 
-		return new ArrayList<Bullet>();
+		return bulletList;
 	}
 
 	private ArrayList<Bullet> createBulletA() {
@@ -109,5 +109,9 @@ public class PlayerController {
 			vPlayer.draw(player.x, player.y);
 		}
 
+	}
+	
+	public void countUp(){
+		frameCount++;
 	}
 }

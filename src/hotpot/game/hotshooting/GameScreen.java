@@ -8,17 +8,17 @@ import hotpot.game.hotshooting.controller.BulletController;
 import hotpot.game.hotshooting.controller.EnemyController;
 import hotpot.game.hotshooting.controller.PlayerController;
 import hotpot.game.hotshooting.shot.Bullet;
-import hotpot.game.hotshooting.shot.PlayerShotA;
 import hotpot.game.hotshooting.view.BulletView;
 import hotpot.game.hotshooting.view.PlayerView;
 import hotpot.game.hotshooting.view.ViewEnemy;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import android.graphics.Color;
-import android.graphics.Rect;
+import android.util.Log;
 
 public class GameScreen extends Screen {
 
@@ -36,6 +36,7 @@ public class GameScreen extends Screen {
 	public ArrayList<EnemyController> cEnemyList;
 	public ArrayList<BulletController> cBulletList;
 	public PlayerController cPlayer;
+	public ArrayList<BulletController> pcBulletList;
 
 	/** 自分の弾のリスト **/
 	ArrayList<Bullet> bulletList;
@@ -56,7 +57,9 @@ public class GameScreen extends Screen {
 
 		cEnemyList = new ArrayList<EnemyController>();
 		cBulletList = new ArrayList<BulletController>();
-		cPlayer = new PlayerController(new Player(30, 120), new PlayerView(game.getGraphics()));
+		cPlayer = new PlayerController(new Player(30, 120), new PlayerView(
+				game.getGraphics()));
+		pcBulletList = new ArrayList<BulletController>();
 
 	}
 
@@ -74,14 +77,12 @@ public class GameScreen extends Screen {
 		cPlayer.move();
 
 		// 自分の弾の生成
-		// cPlayer.createBullet();
-		// TODO 弾のリストに追加
-		// 生成タイミングはコントローラで決める
-		if (frameCount % 10 == 0) {
-			if (player.state == Player.State.ALIVE) {
-				createBullet();
-			}
+		for (Bullet b : cPlayer.createBullet()) {
+
+			pcBulletList.add(new BulletController(b, new BulletView(game
+					.getGraphics())));
 		}
+		
 
 		// 敵の生成
 		// TODO コントローラで生成タイミングを決める
@@ -91,12 +92,8 @@ public class GameScreen extends Screen {
 		}
 
 		// 自分の弾の移動
-		for (Bullet b : bulletList) {
-			if (b.state == Bullet.State.ALIVE && b.x < 320 + 16) {
-				b.move();
-			} else {
-				b.state = Bullet.State.DIE;
-			}
+		for(BulletController bc : pcBulletList){
+			bc.move();
 		}
 
 		// 自分の弾と敵の当たり判定
@@ -168,16 +165,9 @@ public class GameScreen extends Screen {
 
 		// ゲームカウント
 		frameCount++;
+		cPlayer.countUp();
 	}
 
-	private void createBullet() {
-		if (frameCount < 1000) {
-			bulletList.add(new PlayerShotA(player.x + 16, player.y + 8));
-		} else {
-			bulletList.add(new PlayerShotA(player.x + 16, player.y));
-			bulletList.add(new PlayerShotA(player.x + 16, player.y + 16));
-		}
-	}
 
 	@Override
 	public void present(float deltaTime) {
@@ -188,16 +178,19 @@ public class GameScreen extends Screen {
 		// プレイヤーの描画
 		cPlayer.draw();
 
-
 		// 操作の中心点の描画
 		g.drawRect(moveStartX, moveStartY, 16, 16, Color.RED);
 
 		// 自分の弾の描画
-		for (Bullet b : bulletList) {
-			if (b.state == Bullet.State.ALIVE) {
-				g.drawRect(b.x, b.y, 4, 4, Color.GREEN);
-			}
+//		Log.e("bulletcount", "hoge: "+pcBulletList.size());
+		for (BulletController b : pcBulletList){
+			b.draw();
 		}
+//		for (Bullet b : bulletList) {
+//			if (b.state == Bullet.State.ALIVE) {
+//				g.drawRect(b.x, b.y, 4, 4, Color.GREEN);
+//			}
+//		}
 
 		// 敵の弾の描画
 		for (BulletController b : cBulletList) {
