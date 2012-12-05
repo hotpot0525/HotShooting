@@ -1,5 +1,6 @@
 package hotpot.game.hotshooting.controller;
 
+import hotpot.game.hotshooting.Enemy;
 import hotpot.game.hotshooting.Player;
 import hotpot.game.hotshooting.shot.Bullet;
 import hotpot.game.hotshooting.shot.Bullet.State;
@@ -58,7 +59,8 @@ public class BulletController {
 	 * 弾を移動させる
 	 */
 	public void move() {
-		if (bullet.state == Bullet.State.ALIVE && -16 < bullet.x && bullet.x < 320+16) {
+		if (bullet.state == Bullet.State.ALIVE && -16 < bullet.x
+				&& bullet.x < 320 + 16) {
 			bullet.move();
 		} else {
 			bullet.state = Bullet.State.DIE;
@@ -73,4 +75,5 @@ public class BulletController {
 			vBullet.draw(bullet);
 		}
 	}
+
 }

@@ -3,6 +3,7 @@ package hotpot.game.hotshooting.controller;
 import java.util.ArrayList;
 
 import hotpot.game.hotshooting.Enemy;
+import hotpot.game.hotshooting.Player;
 import hotpot.game.hotshooting.Enemy.State;
 import hotpot.game.hotshooting.shot.Bullet;
 import hotpot.game.hotshooting.view.ViewEnemy;
@@ -88,5 +89,6 @@ public class EnemyController {
 	public void draw() {
 		viewEnemy.draw(enemy);
 	}
+
 	
 }

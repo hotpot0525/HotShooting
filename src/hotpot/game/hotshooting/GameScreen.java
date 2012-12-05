@@ -69,12 +69,14 @@ public class GameScreen extends Screen {
 
 		// イベント処理
 		for (TouchEvent event : eventList) {
-
 			cPlayer.setMovePoint(event);
 		}
 
-		// プレイヤーの移動
-		cPlayer.move();
+		turnOfPlayer();
+		turnOfEnemy();
+
+		// // プレイヤーの移動
+		// cPlayer.move();
 
 		// 自分の弾の生成
 		for (Bullet b : cPlayer.createBullet()) {
@@ -82,44 +84,43 @@ public class GameScreen extends Screen {
 			pcBulletList.add(new BulletController(b, new BulletView(game
 					.getGraphics())));
 		}
-		
 
-		// 敵の生成
-		// TODO コントローラで生成タイミングを決める
-		if (frameCount % 100 == 0) {
-			cEnemyList.add(new EnemyController(new Enemy(320, rand
-					.nextInt(320 - 16)), new ViewEnemy(game.getGraphics())));
-		}
+		// // 敵の生成
+		// // TODO コントローラで生成タイミングを決める
+		// if (frameCount % 100 == 0) {
+		// cEnemyList.add(new EnemyController(new Enemy(320, rand
+		// .nextInt(320 - 16)), new ViewEnemy(game.getGraphics())));
+		// }
 
 		// 自分の弾の移動
-		for(BulletController bc : pcBulletList){
+		for (BulletController bc : pcBulletList) {
 			bc.move();
 		}
 
-		// 自分の弾と敵の当たり判定
-		for (Bullet b : bulletList) {
-			if (b.state == Bullet.State.DIE) {
-				continue;
-			}
-
-			for (EnemyController ec : cEnemyList) {
-				if (ec.isHit(b)) {
-					b.hitEnemy();
-					score += ec.hitBullet();
-				}
-			}
-		}
-		// 敵の弾とプレイヤーの当たり判定
-		for (BulletController b : cBulletList) {
-			if (b.getState() == Bullet.State.DIE)
-				continue;
-
-			if (cPlayer.isHit(b)) {
-				b.hit();
-				cPlayer.hitBullet();
-			}
-
-		}
+		// // 自分の弾と敵の当たり判定
+		// for (Bullet b : bulletList) {
+		// if (b.state == Bullet.State.DIE) {
+		// continue;
+		// }
+		//
+		// for (EnemyController ec : cEnemyList) {
+		// if (ec.isHit(b)) {
+		// b.hitEnemy();
+		// score += ec.hitBullet();
+		// }
+		// }
+		// }
+		// // 敵の弾とプレイヤーの当たり判定
+		// for (BulletController b : cBulletList) {
+		// if (b.getState() == Bullet.State.DIE)
+		// continue;
+		//
+		// if (cPlayer.isHit(b)) {
+		// b.hit();
+		// cPlayer.hitBullet();
+		// }
+		//
+		// }
 
 		// 敵オブジェクトの破棄
 		for (int i = cEnemyList.size() - 1; i > -1; --i) {
@@ -168,6 +169,73 @@ public class GameScreen extends Screen {
 		cPlayer.countUp();
 	}
 
+	/**
+	 * 敵の行動
+	 */
+	private void turnOfEnemy() {
+		// 敵の生成
+		// TODO コントローラで生成タイミングを決める
+		if (frameCount % 100 == 0) {
+			cEnemyList.add(new EnemyController(new Enemy(320, rand
+					.nextInt(320 - 16)), new ViewEnemy(game.getGraphics())));
+		}
+
+		checkHitToEnemyWithBullet(cEnemyList, pcBulletList);
+	}
+
+	/**
+	 * 見方の行動
+	 */
+	private void turnOfPlayer() {
+		// プレイヤーの移動
+		cPlayer.move();
+		checkHitToPlayerWithBullet(cPlayer, cBulletList);
+	}
+
+	/**
+	 * 敵の弾と見方の当たり判定
+	 * 
+	 * @param cPlayer2
+	 * @param cBulletList2
+	 */
+	private void checkHitToPlayerWithBullet(PlayerController cPlayer,
+			ArrayList<BulletController> cBulletList) {
+		// 敵の弾とプレイヤーの当たり判定
+		for (BulletController b : cBulletList) {
+			if (b.getState() == Bullet.State.DIE)
+				continue;
+			if (cPlayer.isHit(b)) {
+				b.hit();
+				cPlayer.hitBullet();
+			}
+		}
+	}
+
+	/**
+	 * 見方の弾と敵の当たり判定
+	 * 
+	 * @param cEnemyList
+	 * @param pcBulletList
+	 */
+	private void checkHitToEnemyWithBullet(
+			ArrayList<EnemyController> cEnemyList,
+			ArrayList<BulletController> pcBulletList) {
+		// 自分の弾と敵の当たり判定
+		// for (Bullet b : pcBulletList) {
+		// if (b.state == Bullet.State.DIE) {
+		// continue;
+		// }
+		for (BulletController b : pcBulletList) {
+			if (b.getState() == Bullet.State.DIE)
+				continue;
+			for (EnemyController ec : cEnemyList) {
+				if (ec.isHit(b.bullet)) {
+					b.hit();
+					score += ec.hitBullet();
+				}
+			}
+		}
+	}
 
 	@Override
 	public void present(float deltaTime) {
@@ -182,15 +250,9 @@ public class GameScreen extends Screen {
 		g.drawRect(moveStartX, moveStartY, 16, 16, Color.RED);
 
 		// 自分の弾の描画
-//		Log.e("bulletcount", "hoge: "+pcBulletList.size());
-		for (BulletController b : pcBulletList){
+		for (BulletController b : pcBulletList) {
 			b.draw();
 		}
-//		for (Bullet b : bulletList) {
-//			if (b.state == Bullet.State.ALIVE) {
-//				g.drawRect(b.x, b.y, 4, 4, Color.GREEN);
-//			}
-//		}
 
 		// 敵の弾の描画
 		for (BulletController b : cBulletList) {
@@ -203,7 +265,7 @@ public class GameScreen extends Screen {
 		}
 
 		// HP
-		g.drawText("HP:" + Integer.toString(player.hp), 10, 10, Color.BLACK);
+		g.drawText("HP:" + Integer.toString(cPlayer.player.hp), 10, 10, Color.BLACK);
 		// スコア
 		g.drawText("Score:" + Integer.toString(score), 100, 10, Color.BLACK);
 
