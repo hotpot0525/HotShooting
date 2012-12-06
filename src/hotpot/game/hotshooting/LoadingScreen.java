@@ -17,6 +17,7 @@ public class LoadingScreen extends Screen {
 
         Assets.monster5 = g.newPixmap("monster5.gif", PixmapFormat.RGB565);
         Assets.effect0 = g.newPixmap("effect0.gif", PixmapFormat.RGB565);
+        Assets.player = g.newPixmap("player.png", PixmapFormat.RGB565);
         
 //        Assets.background = g.newPixmap("background.png", PixmapFormat.RGB565);
 //        Assets.logo = g.newPixmap("logo.png", PixmapFormat.ARGB4444);
