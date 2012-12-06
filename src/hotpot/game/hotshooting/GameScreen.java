@@ -22,15 +22,7 @@ import android.util.Log;
 
 public class GameScreen extends Screen {
 
-	Player player;
-	boolean moveMode = false;
-	int moveStartX;
-	int moveStartY;
-	int moveX;
-	int moveY;
-	int maxSpeed = 60;
 	public int score;
-
 	int frameCount = 0;
 
 	public ArrayList<EnemyController> cEnemyList;
@@ -38,21 +30,13 @@ public class GameScreen extends Screen {
 	public PlayerController cPlayer;
 	public ArrayList<BulletController> pcBulletList;
 
-	/** 自分の弾のリスト **/
-	ArrayList<Bullet> bulletList;
-
 	/** ランダム地 */
 	Random rand;
 
 	public GameScreen(Game game) {
 		super(game);
-		player = new Player(30, 120);
-		moveStartX = 0;
-		moveStartY = 0;
-
 		frameCount = 0;
 		score = 0;
-		bulletList = new ArrayList<Bullet>();
 		rand = new Random();
 
 		cEnemyList = new ArrayList<EnemyController>();
@@ -60,6 +44,8 @@ public class GameScreen extends Screen {
 		cPlayer = new PlayerController(new Player(30, 120), new PlayerView(
 				game.getGraphics()));
 		pcBulletList = new ArrayList<BulletController>();
+		
+		Gc.set(cEnemyList, cBulletList, pcBulletList);
 
 	}
 
@@ -75,40 +61,13 @@ public class GameScreen extends Screen {
 		turnOfPlayer();
 		turnOfEnemy();
 
-		gc();
+		Gc.gc();
 
 		// ゲームカウント
 		frameCount++;
 		cPlayer.countUp();
 	}
 
-	/**
-	 * 不要オブジェクトの削除
-	 */
-	private void gc() {
-		// 敵オブジェクトの破棄
-		for (int i = cEnemyList.size() - 1; i > -1; --i) {
-			if (cEnemyList.get(i).getState() != Enemy.State.ALIVE) {
-				cEnemyList.get(i).destroy();
-				cEnemyList.remove(i);
-			}
-		}
-
-		// プレイヤー弾のオブジェクト破棄
-		for (int i = bulletList.size() - 1; i > -1; --i) {
-			if (bulletList.get(i).state != Bullet.State.ALIVE) {
-				bulletList.remove(i);
-			}
-		}
-
-		// 敵の弾のオブジェクト破棄
-		for (int i = cBulletList.size() - 1; i > -1; --i) {
-			if (cBulletList.get(i).getState() != Bullet.State.ALIVE) {
-				cBulletList.get(i).destroy();
-				cBulletList.remove(i);
-			}
-		}
-	}
 
 	/**
 	 * 敵の行動
@@ -214,7 +173,7 @@ public class GameScreen extends Screen {
 		cPlayer.draw();
 
 		// 操作の中心点の描画
-		g.drawRect(moveStartX, moveStartY, 16, 16, Color.RED);
+		g.drawRect(cPlayer.moveStartX, cPlayer.moveStartY, 16, 16, Color.RED);
 
 		// 自分の弾の描画
 		for (BulletController b : pcBulletList) {

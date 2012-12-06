@@ -16,8 +16,8 @@ public class PlayerController {
 	boolean moveMode = false;
 
 	/** 移動開始位置 */
-	int moveStartX;
-	int moveStartY;
+	public int moveStartX;
+	public int moveStartY;
 
 	/** 移動先 */
 	int moveX;
