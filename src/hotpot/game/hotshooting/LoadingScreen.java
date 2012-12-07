@@ -50,7 +50,8 @@ public class LoadingScreen extends Screen {
 //        Settings.load(game.getFileIO());
 //        game.setScreen(new MainMenuScreen(game));
 
-        game.setScreen(new GameScreen(game));
+//        game.setScreen(new GameScreen(game));
+        game.setScreen(new TopScreen(game));
     }
 
     @Override

@@ -21,7 +21,7 @@ import android.graphics.Color;
 import android.util.Log;
 
 public class GameScreen extends Screen {
-
+	
 	public int score;
 	int frameCount = 0;
 
@@ -66,9 +66,14 @@ public class GameScreen extends Screen {
 		// ゲームカウント
 		frameCount++;
 		cPlayer.countUp();
+		
+
 	}
 
-
+	public void isGameOver(){
+		game.setScreen(new TopScreen(game));
+	}
+	
 	/**
 	 * 敵の行動
 	 */
