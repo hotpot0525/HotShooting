@@ -66,11 +66,14 @@ public class GameScreen extends Screen {
 		// ゲームカウント
 		frameCount++;
 		cPlayer.countUp();
+		if(cPlayer.player.state == Player.State.DIE){
+			gameOver();
+		}
 		
 
 	}
 
-	public void isGameOver(){
+	public void gameOver(){
 		game.setScreen(new TopScreen(game));
 	}
 	
