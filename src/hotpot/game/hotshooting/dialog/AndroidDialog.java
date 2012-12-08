@@ -11,6 +11,7 @@ public class AndroidDialog implements Dialog {
 
 	protected String title;
 	protected String message;
+	protected boolean visible = true;
 
 	protected Button positiveButton;
 	protected Button naturalButton;
@@ -25,14 +26,23 @@ public class AndroidDialog implements Dialog {
 	}
 
 	public void show(Graphics g) {
+		if(!visible) return;
+		
 		g.drawRect(dialogRect.left, dialogRect.top, dialogRect.right,
 				dialogRect.bottom, Color.BLUE);
 		if (positiveButton != null) {
 			positiveButton.draw();
 		}
+		if (naturalButton != null) {
+			positiveButton.draw();
+		}
+		if (naturalButton != null) {
+			positiveButton.draw();
+		}
 	}
 
 	public boolean runIfCliked(TouchEvent event) {
+		visible = false;
 		 if(positiveButton.runIfClicked(event)){
 			 return true;
 		 }
@@ -42,6 +52,7 @@ public class AndroidDialog implements Dialog {
 		 if(negativeButton.runIfClicked(event)){
 			 return true;
 		 }
+		 visible = true;
 		 return false;
 	}
 
