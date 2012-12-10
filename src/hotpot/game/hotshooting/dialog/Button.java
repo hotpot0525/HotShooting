@@ -41,7 +41,8 @@ public class Button {
 	}
 
 	public void draw() {
-		g.drawRect(r.left, r.top, r.right, r.bottom, Color.WHITE);
+		g.drawRect(r.left, r.top, r.width(), r.height(), Color.GRAY);
+		g.drawText(text, r.left+15, r.centerY()+5, Color.WHITE);
 		
 	}	
 

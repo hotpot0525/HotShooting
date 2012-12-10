@@ -21,39 +21,49 @@ public class AndroidDialog implements Dialog {
 
 	public AndroidDialog(Graphics g) {
 		this.g = g;
-		dialogRect = new Rect(g.getWidth() / 4, g.getHeight() / 4,
-				g.getWidth() / 4 * 3, g.getHeight() / 4 * 3);
+		int left = 40;
+		int top = 150;
+		int right = left + 230;
+		int bottom = top + 110;
+		dialogRect = new Rect(left, top, right, bottom);
 	}
 
-	public void show(Graphics g) {
-		if(!visible) return;
-		
-		g.drawRect(dialogRect.left, dialogRect.top, dialogRect.right,
-				dialogRect.bottom, Color.BLUE);
+	public void show() {
+		if (!visible)
+			return;
+
+		g.drawRect(dialogRect.left, dialogRect.top, dialogRect.width(),
+				dialogRect.height(), Color.BLUE);
+		if (title != null)
+			g.drawText(title, dialogRect.left + 50, dialogRect.top + 30,
+					Color.WHITE);
+		if (message != null)
+			g.drawText(message, dialogRect.left + 10, dialogRect.top + 50,
+					Color.WHITE);
 		if (positiveButton != null) {
 			positiveButton.draw();
 		}
 		if (naturalButton != null) {
-			positiveButton.draw();
+			naturalButton.draw();
 		}
-		if (naturalButton != null) {
-			positiveButton.draw();
+		if (negativeButton != null) {
+			negativeButton.draw();
 		}
 	}
 
 	public boolean runIfCliked(TouchEvent event) {
 		visible = false;
-		 if(positiveButton.runIfClicked(event)){
-			 return true;
-		 }
-		 if(naturalButton.runIfClicked(event)){
-			 return true;
-		 }
-		 if(negativeButton.runIfClicked(event)){
-			 return true;
-		 }
-		 visible = true;
-		 return false;
+		if (positiveButton.runIfClicked(event)) {
+			return true;
+		}
+		if (naturalButton.runIfClicked(event)) {
+			return true;
+		}
+		if (negativeButton.runIfClicked(event)) {
+			return true;
+		}
+		visible = true;
+		return false;
 	}
 
 	@Override
@@ -70,46 +80,50 @@ public class AndroidDialog implements Dialog {
 
 	@Override
 	public Dialog setPositiveText(String text) {
-		createButtonInstance(negativeButton);
-		int left = dialogRect.left + dialogRect.width() / 5*4;
-		int top = dialogRect.top+ dialogRect.height() / 5*4;
-		int width = dialogRect.width() / 5*5;
-		int height = dialogRect.height() / 5*5;
+		if (positiveButton == null)
+			positiveButton = new Button(g);
+		int left = dialogRect.left + 150;
+		int top = dialogRect.top + 70;
+		int width = 60;
+		int height = 30;
 		positiveButton.setPosition(left, top, width, height);
-		
+
 		positiveButton.setText(text);
 		return this;
 	}
 
 	@Override
 	public Dialog setNaturalText(String text) {
-		createButtonInstance(negativeButton);
-		int left = dialogRect.left + dialogRect.width() / 5*3;
-		int top = dialogRect.top+ dialogRect.height() / 5*3;
-		int width = dialogRect.width() / 5*4;
-		int height = dialogRect.height() / 5*4;
+		if (naturalButton == null)
+			naturalButton = new Button(g);
+		int left = dialogRect.left + 80;
+		int top = dialogRect.top + 70;
+		int width = 60;
+		int height = 30;
 		naturalButton.setPosition(left, top, width, height);
-		
+
 		naturalButton.setText(text);
 		return this;
 	}
 
 	@Override
 	public Dialog setNegativeText(String text) {
-		createButtonInstance(negativeButton);
-		int left = dialogRect.left + dialogRect.width() / 5*1;
-		int top = dialogRect.top+ dialogRect.height() / 5*1;
-		int width = dialogRect.width() / 5*2;
-		int height = dialogRect.height() / 5*2;
-		naturalButton.setPosition(left, top, width, height);
-		
-		naturalButton.setText(text);
+		if (negativeButton == null)
+			negativeButton = new Button(g);
+		int left = dialogRect.left + 10;
+		int top = dialogRect.top + 70;
+		int width = 60;
+		int height = 30;
+		negativeButton.setPosition(left, top, width, height);
+
+		negativeButton.setText(text);
 		return this;
 	}
 
 	@Override
 	public Dialog setPositiveListener(ButtonListener listener) {
-		if(createButtonInstance(negativeButton)){
+		if (positiveButton == null) {
+			positiveButton = new Button(g);
 			// デフォルトテキスト
 			positiveButton.setText("OK");
 		}
@@ -119,7 +133,8 @@ public class AndroidDialog implements Dialog {
 
 	@Override
 	public Dialog setNaturalListener(ButtonListener listener) {
-		if(createButtonInstance(negativeButton)){
+		if (naturalButton == null) {
+			naturalButton = new Button(g);
 			// デフォルトテキスト
 			naturalButton.setText("OK");
 		}
@@ -129,7 +144,8 @@ public class AndroidDialog implements Dialog {
 
 	@Override
 	public Dialog setNegativeListener(ButtonListener listener) {
-		if(createButtonInstance(negativeButton)){
+		if (negativeButton == null) {
+			negativeButton = new Button(g);
 			// デフォルトテキスト
 			negativeButton.setText("CANCEL");
 		}
@@ -137,17 +153,4 @@ public class AndroidDialog implements Dialog {
 		return this;
 	}
 
-	
-	/**
-	 * ボタンオブジェクトを作成したらtrueを返す
-	 * @param button
-	 * @return
-	 */
-	private boolean createButtonInstance(Button button) {
-		if(button == null){
-			button = new Button(g);
-			return true;
-		}
-		return false;
-	}
 }

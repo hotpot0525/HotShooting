@@ -4,7 +4,7 @@ import hotpot.game.framework.Graphics;
 
 public interface Dialog {
 	
-	public void show(Graphics g);
+	public void show();
 	
 	public Dialog setTitle(String title);
 	

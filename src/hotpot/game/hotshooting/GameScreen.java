@@ -7,21 +7,22 @@ import hotpot.game.framework.Screen;
 import hotpot.game.hotshooting.controller.BulletController;
 import hotpot.game.hotshooting.controller.EnemyController;
 import hotpot.game.hotshooting.controller.PlayerController;
+import hotpot.game.hotshooting.dialog.AndroidDialog;
+import hotpot.game.hotshooting.dialog.ButtonListener;
+import hotpot.game.hotshooting.dialog.Dialog;
 import hotpot.game.hotshooting.shot.Bullet;
 import hotpot.game.hotshooting.view.BulletView;
 import hotpot.game.hotshooting.view.PlayerView;
 import hotpot.game.hotshooting.view.ViewEnemy;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import android.graphics.Color;
-import android.util.Log;
 
 public class GameScreen extends Screen {
-	
+
 	public int score;
 	int frameCount = 0;
 
@@ -29,6 +30,7 @@ public class GameScreen extends Screen {
 	public ArrayList<BulletController> cBulletList;
 	public PlayerController cPlayer;
 	public ArrayList<BulletController> pcBulletList;
+	public Dialog dialog;
 
 	/** ランダム地 */
 	Random rand;
@@ -44,7 +46,7 @@ public class GameScreen extends Screen {
 		cPlayer = new PlayerController(new Player(30, 120), new PlayerView(
 				game.getGraphics()));
 		pcBulletList = new ArrayList<BulletController>();
-		
+
 		Gc.set(cEnemyList, cBulletList, pcBulletList);
 
 	}
@@ -66,17 +68,30 @@ public class GameScreen extends Screen {
 		// ゲームカウント
 		frameCount++;
 		cPlayer.countUp();
-		if(cPlayer.player.state == Player.State.DIE){
+		if (cPlayer.player.state == Player.State.DIE) {
 			gameOver();
 		}
-		
 
 	}
 
-	public void gameOver(){
+	public void gameOver() {
+
+		dialog = new AndroidDialog(game.getGraphics());
+		dialog.setMessage("GameOver");
+		dialog.setTitle("GameOver");
+		dialog.setNaturalListener(new ButtonListener() {
+			@Override
+			public void onClick() {
+				moveTopPage();
+			}
+		});
+		dialog.setNaturalText("ok");
+	}
+
+	public void moveTopPage() {
 		game.setScreen(new TopScreen(game));
 	}
-	
+
 	/**
 	 * 敵の行動
 	 */
@@ -203,6 +218,10 @@ public class GameScreen extends Screen {
 				Color.BLACK);
 		// スコア
 		g.drawText("Score:" + Integer.toString(score), 100, 10, Color.BLACK);
+
+		// ゲームオーバーダイアログ
+		if (dialog != null)
+			dialog.show();
 
 	}
 
